@@ -1,6 +1,7 @@
 import logo from './logo.svg';
 import Result from './Result';
-
+import './index.css';
+import './flags.css';
 import './App.css';
 import { useQuery, gql } from '@apollo/client';
 import {

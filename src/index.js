@@ -1,15 +1,24 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
+import Product from './Product';
+import './index.css';
+import './flags.css';
+import './App.css';
 import reportWebVitals from './reportWebVitals';
+import UnServiceDevice from './component/UnServiceDevice';
 import {
   ApolloClient,
   InMemoryCache,
   ApolloProvider,
   makeVar,
 } from "@apollo/client";
-
+import { ProductService } from './ProductService';
+import 'primeicons/primeicons.css';
+import { PrimeReactProvider } from 'primereact/api';
+import 'primeflex/primeflex.css';
+import 'primereact/resources/primereact.css';
+import 'primereact/resources/themes/lara-light-indigo/theme.css';
 
 const client = new ApolloClient({
   uri: "http://localhost:4000",
@@ -20,7 +29,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
       <ApolloProvider client={client}>
-      <App />
+      <UnServiceDevice/>
     </ApolloProvider>
   </React.StrictMode>
 );

@@ -18,6 +18,4 @@ query FindUnservicedDevicesOrComponentsOrSubComponentsWithHardCodedParameters {
     subcomponent_serial_number
   }
 }
-
-
 `;
