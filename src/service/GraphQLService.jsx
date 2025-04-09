@@ -20,9 +20,6 @@ query FindUnservicedDevicesOrComponentsOrSubComponentsWithHardCodedParameters {
 `;
 
 
-
-
-// ✅ Custom hook - starts with "use"
 export function useUnservicedDevices() {
     const { loading, error, data, refetch } = useQuery(GET_UNSERVICED_DEVICES_COMPONENTS, {
       fetchPolicy: "network-only",
