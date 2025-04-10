@@ -165,89 +165,90 @@ const onCellUnselect = (event) => {
   }
 
   return (
-    <div>
-      <Splitter style={{ height: '50px'}} className="mb-2 mt-4">
-        <SplitterPanel className="flex align-items-center justify-content-center">
-          <Panel header="Total Farms" style={{ height: '100%', width: '100%' }}>
-            <p className="m-0">{farmCount}</p>
-          </Panel>
-        </SplitterPanel>
-        <SplitterPanel className="flex align-items-center justify-content-center">
-          <Panel header="Total Devices" style={{ height: '100%', width: '100%' }}>
-            <p className="m-0">{devicesCount}</p>
-          </Panel>
-        </SplitterPanel>
-      </Splitter>
-
-      <br />
-
-<div className="card mt-6">
-  <h2>Unserviced devices with their respective components and sub-components</h2>
-
-  <div className="flex flex-wrap items-end gap-3 mb-4 mt-4">
-    <Dropdown
-      value={selectedDeviceType}
-      onChange={(e) => setSelectedDeviceType(e.value)}
-      options={deviceTypes}
-      optionLabel="device_type"
-      showClear
-      placeholder="Select a device type"
-      className="w-full md:w-16rem"
-    />
-
-    <Dropdown
-      value={selectedDeLavalSubscription}
-      onChange={(e) => setselectedDeLavalSubscription(e.value)}
-      options={deLavalSubscriptions}
-      optionLabel="delaval_subscription_type"
-      showClear
-      placeholder="Select a subscription"
-      className="w-full md:w-16rem"
-    />
-
-    <InputNumber
-      value={hardwareVersion}
-      onValueChange={(e) => setHardwareVersion(e.value)}
-      minFractionDigits={2}
-      maxFractionDigits={3}
-      className="w-full md:w-16rem"
-      placeholder="Hardware version"
-    />
-
-    <Calendar
-      inputId="service_date"
-      value={serviceDate}
-      onChange={(e) => setServiceDate(e.value)}
-      className="w-full md:w-16rem"
-      placeholder="Service date"
-      showIcon
-    />
-
-    <Button label="Search" className="w-full md:w-5rem" />
-  </div>
+<div>
+  <Splitter style={{ height: '50px' }} className="mb-2 mt-4">
+    <SplitterPanel className="flex align-items-center justify-content-center">
+      <Panel header="Total Farms" style={{ height: '100%', width: '100%' }}>
+        <p className="m-0">{farmCount}</p>
+      </Panel>
+    </SplitterPanel>
+    <SplitterPanel className="flex align-items-center justify-content-center">
+      <Panel header="Total Devices" style={{ height: '100%', width: '100%' }}>
+        <p className="m-0">{devicesCount}</p>
+      </Panel>
+    </SplitterPanel>
+  </Splitter>
 
   <Toast ref={toast} />
 
-  <DataTable
-    value={unservicedDevices}
-    showGridlines
-    tableStyle={{ minWidth: "50rem" }}
-    paginator
-    rows={5}
-    rowsPerPageOptions={[5, 10, 25, 50]}
-    cellSelection
-    selectionMode="single"
-    selection={selectedCell}
-    onSelectionChange={(e) => setSelectedCell(e.value)}
-    onCellSelect={onCellSelect}
-    onCellUnselect={onCellUnselect}
+  <Panel 
+    header="Unserviced devices with their respective components and sub-components"
+    className="mt-8 shadow-2 border-round"
+    style={{ width: '100%' }}
   >
-    <Column field="device_serial_number" header="Device ID" />
-    <Column field="component_serial_number" header="Component ID" />
-    <Column field="subcomponent_serial_number" header="Sub Component ID" />
-  </DataTable>
-  </div>
+    <div className="flex flex-wrap items-end gap-3 mb-4 mt-4">
+      <Dropdown
+        value={selectedDeviceType}
+        onChange={(e) => setSelectedDeviceType(e.value)}
+        options={deviceTypes}
+        optionLabel="device_type"
+        showClear
+        placeholder="Select a device type"
+        className="w-full md:w-16rem"
+      />
+
+      <Dropdown
+        value={selectedDeLavalSubscription}
+        onChange={(e) => setselectedDeLavalSubscription(e.value)}
+        options={deLavalSubscriptions}
+        optionLabel="delaval_subscription_type"
+        showClear
+        placeholder="Select a subscription"
+        className="w-full md:w-16rem"
+      />
+
+      <InputNumber
+        value={hardwareVersion}
+        onValueChange={(e) => setHardwareVersion(e.value)}
+        minFractionDigits={2}
+        maxFractionDigits={3}
+        className="w-full md:w-16rem"
+        placeholder="Hardware version"
+      />
+
+      <Calendar
+        inputId="service_date"
+        value={serviceDate}
+        onChange={(e) => setServiceDate(e.value)}
+        className="w-full md:w-16rem"
+        placeholder="Service date"
+        showIcon
+      />
+
+      <Button label="Search" className="w-full md:w-5rem" />
+    </div>
+
+    <DataTable
+      value={unservicedDevices}
+      showGridlines
+      tableStyle={{ minWidth: '50rem' }}
+      paginator
+      rows={5}
+      rowsPerPageOptions={[5, 10, 25, 50]}
+      cellSelection
+      selectionMode="single"
+      selection={selectedCell}
+      onSelectionChange={(e) => setSelectedCell(e.value)}
+      onCellSelect={onCellSelect}
+      onCellUnselect={onCellUnselect}
+    >
+      <Column field="device_serial_number" header="Device ID" />
+      <Column field="component_serial_number" header="Component ID" />
+      <Column field="subcomponent_serial_number" header="Sub Component ID" />
+    </DataTable>
+  </Panel>
 </div>
+
 
   );
 }
