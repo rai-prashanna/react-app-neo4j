@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useQuery, gql } from "@apollo/client";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { ProgressSpinner } from "primereact/progressspinner"; // PrimeReact spinner
+import { ProgressSpinner } from "primereact/progressspinner";
 import { Panel } from 'primereact/panel';
 import { Splitter, SplitterPanel } from 'primereact/splitter';
 
-// GraphQL query
+// GraphQL queries
 const GET_UNSERVICED_DEVICES_COMPONENTS = gql`
   query FindUnservicedDevicesOrComponentsOrSubComponentsWithHardCodedParameters {
     findUnservicedDevicesOrComponentsOrSubComponentsWithHardCodedParameters {
@@ -17,22 +17,50 @@ const GET_UNSERVICED_DEVICES_COMPONENTS = gql`
   }
 `;
 
+const GET_TOTAL_FARMS = gql`
+  query FarmsAggregate {
+    farmsAggregate {
+      count
+    }
+  }
+`;
+
 export default function UnServiceDevice() {
-  const { loading, error, data } = useQuery(GET_UNSERVICED_DEVICES_COMPONENTS, {
-    fetchPolicy: "network-only", // Optional but useful for always getting fresh data
+  const [unservicedDevices, setUnservicedDevices] = useState([]);
+  const [farmcount, setFarmcount] = useState(0);
+
+  const {
+    loading: farmsLoading,
+    error: farmsError,
+    data: farmsData,
+  } = useQuery(GET_TOTAL_FARMS, {
+    fetchPolicy: "network-only",
     pollInterval: 5000,
   });
 
-  const [result, setResult] = useState([]);
+  const {
+    loading: devicesLoading,
+    error: devicesError,
+    data: devicesData,
+  } = useQuery(GET_UNSERVICED_DEVICES_COMPONENTS, {
+    fetchPolicy: "network-only",
+  });
+
 
   useEffect(() => {
-    if (data?.findUnservicedDevicesOrComponentsOrSubComponentsWithHardCodedParameters) {
-      setResult(data.findUnservicedDevicesOrComponentsOrSubComponentsWithHardCodedParameters);
+    console.log("Farms data:", farmsData);
+    console.log("Devices data:", devicesData);
+
+    if (farmsData?.farmsAggregate?.count !== undefined) {
+      setFarmcount(farmsData.farmsAggregate.count);
     }
-  }, [loading]);
 
+    if (devicesData?.findUnservicedDevicesOrComponentsOrSubComponentsWithHardCodedParameters) {
+      setUnservicedDevices(devicesData.findUnservicedDevicesOrComponentsOrSubComponentsWithHardCodedParameters);
+    }
+  }, [farmsData, devicesData]);
 
-  if (loading) {
+  if (farmsLoading || devicesLoading) {
     return (
       <div className="flex justify-content-center align-items-center" style={{ height: "300px" }}>
         <ProgressSpinner />
@@ -40,38 +68,35 @@ export default function UnServiceDevice() {
     );
   }
 
-  if (error) {
-    return <p>Error fetching data: {error.message}</p>;
+  if (farmsError || devicesError) {
+    return <p>Error fetching data: {farmsError?.message || devicesError?.message}</p>;
   }
 
-  if (!loading) {
-    return (
-        <div>
-            <Splitter style={{ height: '50px'}} className="mb-2 mt-4">
-                <SplitterPanel className="flex align-items-center justify-content-center" >
-                    <Panel header="Total Farms" style={{ height: '100%', width: '100%' }}>
-                        <p className="m-0">1</p>
-                    </Panel>
-                </SplitterPanel>
-                <SplitterPanel className="flex align-items-center justify-content-center" >
-                    <Panel header="Total Devices" style={{ height: '100%', width: '100%' }}>
-                        <p className="m-0">10</p>
-                    </Panel>
-                </SplitterPanel>
-            </Splitter>
-            
-            <br />
+  return (
+    <div>
+      <Splitter style={{ height: '50px'}} className="mb-2 mt-4">
+        <SplitterPanel className="flex align-items-center justify-content-center">
+          <Panel header="Total Farms" style={{ height: '100%', width: '100%' }}>
+            <p className="m-0">{farmcount}</p>
+          </Panel>
+        </SplitterPanel>
+        <SplitterPanel className="flex align-items-center justify-content-center">
+          <Panel header="Total Devices" style={{ height: '100%', width: '100%' }}>
+            <p className="m-0">10</p>
+          </Panel>
+        </SplitterPanel>
+      </Splitter>
 
-            <div className="card">
-                <h2>Unserviced Devices</h2>
-                <DataTable value={result} showGridlines tableStyle={{ minWidth: "50rem" }}>
-                    <Column field="device_serial_number" header="Device ID" />
-                    <Column field="component_serial_number" header="Component ID" />
-                    <Column field="subcomponent_serial_number" header="Sub Component ID" />
-                </DataTable>
-            </div>
-        </div>
-      );
-  }
-  
+      <br />
+
+      <div className="card">
+        <h2>Unserviced Devices</h2>
+        <DataTable value={unservicedDevices} showGridlines tableStyle={{ minWidth: "50rem" }}>
+          <Column field="device_serial_number" header="Device ID" />
+          <Column field="component_serial_number" header="Component ID" />
+          <Column field="subcomponent_serial_number" header="Sub Component ID" />
+        </DataTable>
+      </div>
+    </div>
+  );
 }
