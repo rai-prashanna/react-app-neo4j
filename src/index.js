@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
 import Product from './Product';
 import './index.css';
 import './flags.css';
@@ -13,12 +12,12 @@ import {
   ApolloProvider,
   makeVar,
 } from "@apollo/client";
-import { ProductService } from './ProductService';
+
+import 'primeflex/primeflex.css';
 import 'primeicons/primeicons.css';
-import { PrimeReactProvider } from 'primereact/api';
 import 'primeflex/primeflex.css';
 import 'primereact/resources/primereact.css';
-import 'primereact/resources/themes/lara-light-indigo/theme.css';
+import 'primereact/resources/themes/bootstrap4-light-blue/theme.css';
 
 const client = new ApolloClient({
   uri: "http://localhost:4000",

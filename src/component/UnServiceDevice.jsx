@@ -7,7 +7,8 @@ import { Panel } from 'primereact/panel';
 import { Splitter, SplitterPanel } from 'primereact/splitter';
 import { Dropdown } from 'primereact/dropdown';
 import { FloatLabel } from 'primereact/floatlabel';
-
+import { Calendar } from 'primereact/calendar';
+import { InputNumber } from 'primereact/inputnumber';
 
 // GraphQL queries
 
@@ -45,12 +46,25 @@ query DevicesAggregate {
 }
 `;
 
+const GET_DELAVAL_SUBSCRIPTION_TYPES = gql`
+query DevicesAggregate {
+  deLavalSubscriptions {
+    type
+  }
+}
+`;
+
 export default function UnServiceDevice() {
   const [unservicedDevices, setUnservicedDevices] = useState([]);
   const [farmCount, setFarmCount] = useState(0);
   const [devicesCount, setDevicesCount] = useState(0);
   const [deviceTypes, setDeviceTypes] = useState([]);
   const [selectedDeviceType, setSelectedDeviceType] = useState(null);
+  const [serviceDate, setServiceDate] = useState(null);
+
+  const [deLavalSubscriptions, setDeLavalSubscriptions] = useState([]);
+  const [selectedDeLavalSubscription, setselectedDeLavalSubscription] = useState(null);
+  const [hardwareVersion, setHardwareVersion] = useState(null);
 
   const {
     loading: farmsLoading,
@@ -84,6 +98,14 @@ export default function UnServiceDevice() {
   } = useQuery(GET_DEVICE_TYPES, {
     fetchPolicy: "network-only",pollInterval: 5000,
   });
+  
+  const {
+    loading: deviceSubscriptionTypeLoading,
+    error: deviceSubscriptionTypeError,
+    data: deviceSubscriptionTypeData,
+  } = useQuery(GET_DELAVAL_SUBSCRIPTION_TYPES, {
+    fetchPolicy: "network-only",pollInterval: 5000,
+  });
 
 
   useEffect(() => {
@@ -110,8 +132,13 @@ export default function UnServiceDevice() {
       console.log("Device types data:", deviceTypesData);
 
     }
+
+    if (deviceSubscriptionTypeData?.deLavalSubscriptions) {
+      setDeLavalSubscriptions(deviceSubscriptionTypeData.deLavalSubscriptions);
+      console.log("deLavalSubscriptionsdata:", deviceSubscriptionTypeData.deLavalSubscriptions);
+    }
     
-  }, [farmsData, unServicedDevicesData,devicesData,deviceTypesData]);
+  }, [farmsData, unServicedDevicesData,devicesData,deviceTypesData,deviceSubscriptionTypeData]);
 
   if (farmsLoading || unServicedDevicesLoading) {
     return (
@@ -143,18 +170,21 @@ export default function UnServiceDevice() {
       <br />
 
       <div className="card">
-        <h2>Unserviced Devices</h2>
-{/*         <FloatLabel className="w-full md:w-14rem">  
+        <h2>Unserviced devices with their respective components and sub-components </h2>
+        <Dropdown value={selectedDeviceType} onChange={(e) => setSelectedDeviceType(e.value)} options={deviceTypes} optionLabel="device_type" 
+                showClear placeholder="Select a device type" className="w-full md:w-16rem mb-4 mt-4" />
+        <Dropdown value={selectedDeLavalSubscription} onChange={(e) => setselectedDeLavalSubscription(e.value)} options={deLavalSubscriptions} optionLabel="delaval_subscription_type" 
+                showClear placeholder="Select a subscription" className="w-full md:w-16rem mb-4 mt-4 ml-3" />     
+        <InputNumber value={hardwareVersion} onValueChange={(e) => setHardwareVersion(e.value)} minFractionDigits={2} maxFractionDigits={5} className="w-full md:w-16rem ml-3" placeholder="Hardware version"/>
 
-        </FloatLabel> */}
-        <Dropdown value={selectedDeviceType} onChange={(e) => setSelectedDeviceType(e.value)} options={deviceTypes} optionLabel="name" 
-                showClear placeholder="Select a Device Type" className="w-full md:w-16rem mb-4 mt-4" />
-                
-        <DataTable value={unservicedDevices} showGridlines tableStyle={{ minWidth: "50rem" }}>
+        <Calendar inputId="service_date" value={serviceDate} onChange={(e) => setServiceDate(e.value)} className="w-full md:w-16rem ml-3" placeholder="Service date" showIcon/>
+
+        <DataTable value={unservicedDevices} showGridlines tableStyle={{ minWidth: "50rem" }} paginator rows={5} rowsPerPageOptions={[5, 10, 25, 50]}>
           <Column field="device_serial_number" header="Device ID" />
           <Column field="component_serial_number" header="Component ID" />
           <Column field="subcomponent_serial_number" header="Sub Component ID" />
         </DataTable>
+
       </div>
     </div>
   );
