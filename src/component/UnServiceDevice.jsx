@@ -10,6 +10,7 @@ import { FloatLabel } from 'primereact/floatlabel';
 import { Calendar } from 'primereact/calendar';
 import { InputNumber } from 'primereact/inputnumber';
 import { Toast } from 'primereact/toast'
+import { Button } from 'primereact/button';
 
 // GraphQL queries
 
@@ -180,26 +181,73 @@ const onCellUnselect = (event) => {
 
       <br />
 
-      <div className="card">
-        <h2>Unserviced devices with their respective components and sub-components </h2>
-        <Dropdown value={selectedDeviceType} onChange={(e) => setSelectedDeviceType(e.value)} options={deviceTypes} optionLabel="device_type" 
-                showClear placeholder="Select a device type" className="w-full md:w-16rem mb-4 mt-4" />
-        <Dropdown value={selectedDeLavalSubscription} onChange={(e) => setselectedDeLavalSubscription(e.value)} options={deLavalSubscriptions} optionLabel="delaval_subscription_type" 
-                showClear placeholder="Select a subscription" className="w-full md:w-16rem mb-4 mt-4 ml-3" />     
-        <InputNumber value={hardwareVersion} onValueChange={(e) => setHardwareVersion(e.value)} minFractionDigits={2} maxFractionDigits={5} className="w-full md:w-16rem ml-3" placeholder="Hardware version"/>
+<div className="card mt-6">
+  <h2>Unserviced devices with their respective components and sub-components</h2>
 
-        <Calendar inputId="service_date" value={serviceDate} onChange={(e) => setServiceDate(e.value)} className="w-full md:w-16rem ml-3" placeholder="Service date" showIcon/>
-        <Toast ref={toast} />
-        <DataTable value={unservicedDevices} showGridlines tableStyle={{ minWidth: "50rem" }} paginator rows={5} rowsPerPageOptions={[5, 10, 25, 50]}
-        cellSelection selectionMode="single" selection={selectedCell}
-        onSelectionChange={(e) => setSelectedCell(e.value)} 
-        onCellSelect={onCellSelect} onCellUnselect={onCellUnselect}>
-            <Column field="device_serial_number" header="Device ID" />
-            <Column field="component_serial_number" header="Component ID" />
-            <Column field="subcomponent_serial_number" header="Sub Component ID" />
-        </DataTable>
+  <div className="flex flex-wrap items-end gap-3 mb-4 mt-4">
+    <Dropdown
+      value={selectedDeviceType}
+      onChange={(e) => setSelectedDeviceType(e.value)}
+      options={deviceTypes}
+      optionLabel="device_type"
+      showClear
+      placeholder="Select a device type"
+      className="w-full md:w-16rem"
+    />
 
-      </div>
-    </div>
+    <Dropdown
+      value={selectedDeLavalSubscription}
+      onChange={(e) => setselectedDeLavalSubscription(e.value)}
+      options={deLavalSubscriptions}
+      optionLabel="delaval_subscription_type"
+      showClear
+      placeholder="Select a subscription"
+      className="w-full md:w-16rem"
+    />
+
+    <InputNumber
+      value={hardwareVersion}
+      onValueChange={(e) => setHardwareVersion(e.value)}
+      minFractionDigits={2}
+      maxFractionDigits={3}
+      className="w-full md:w-16rem"
+      placeholder="Hardware version"
+    />
+
+    <Calendar
+      inputId="service_date"
+      value={serviceDate}
+      onChange={(e) => setServiceDate(e.value)}
+      className="w-full md:w-16rem"
+      placeholder="Service date"
+      showIcon
+    />
+
+    <Button label="Search" className="w-full md:w-5rem" />
+  </div>
+
+  <Toast ref={toast} />
+
+  <DataTable
+    value={unservicedDevices}
+    showGridlines
+    tableStyle={{ minWidth: "50rem" }}
+    paginator
+    rows={5}
+    rowsPerPageOptions={[5, 10, 25, 50]}
+    cellSelection
+    selectionMode="single"
+    selection={selectedCell}
+    onSelectionChange={(e) => setSelectedCell(e.value)}
+    onCellSelect={onCellSelect}
+    onCellUnselect={onCellUnselect}
+  >
+    <Column field="device_serial_number" header="Device ID" />
+    <Column field="component_serial_number" header="Component ID" />
+    <Column field="subcomponent_serial_number" header="Sub Component ID" />
+  </DataTable>
+  </div>
+</div>
+
   );
 }
