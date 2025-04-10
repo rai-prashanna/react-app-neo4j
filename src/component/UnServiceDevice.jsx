@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect , useRef} from "react";
 import { useQuery, gql } from "@apollo/client";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -9,6 +9,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { FloatLabel } from 'primereact/floatlabel';
 import { Calendar } from 'primereact/calendar';
 import { InputNumber } from 'primereact/inputnumber';
+import { Toast } from 'primereact/toast'
 
 // GraphQL queries
 
@@ -66,6 +67,16 @@ export default function UnServiceDevice() {
   const [selectedDeLavalSubscription, setselectedDeLavalSubscription] = useState(null);
   const [hardwareVersion, setHardwareVersion] = useState(null);
 
+  const [selectedCell, setSelectedCell] = useState(null);
+  const toast = useRef(null);
+
+  const onCellSelect = (event) => {
+    toast.current.show({ severity: 'info', summary: 'Cell Selected', detail: `Name: ${event.value}`, life: 3000 });
+};
+
+const onCellUnselect = (event) => {
+    toast.current.show({ severity: 'warn', summary: 'Cell Unselected', detail: `Name: ${event.value}`, life: 3000 });
+};
   const {
     loading: farmsLoading,
     error: farmsError,
@@ -178,11 +189,14 @@ export default function UnServiceDevice() {
         <InputNumber value={hardwareVersion} onValueChange={(e) => setHardwareVersion(e.value)} minFractionDigits={2} maxFractionDigits={5} className="w-full md:w-16rem ml-3" placeholder="Hardware version"/>
 
         <Calendar inputId="service_date" value={serviceDate} onChange={(e) => setServiceDate(e.value)} className="w-full md:w-16rem ml-3" placeholder="Service date" showIcon/>
-
-        <DataTable value={unservicedDevices} showGridlines tableStyle={{ minWidth: "50rem" }} paginator rows={5} rowsPerPageOptions={[5, 10, 25, 50]}>
-          <Column field="device_serial_number" header="Device ID" />
-          <Column field="component_serial_number" header="Component ID" />
-          <Column field="subcomponent_serial_number" header="Sub Component ID" />
+        <Toast ref={toast} />
+        <DataTable value={unservicedDevices} showGridlines tableStyle={{ minWidth: "50rem" }} paginator rows={5} rowsPerPageOptions={[5, 10, 25, 50]}
+        cellSelection selectionMode="single" selection={selectedCell}
+        onSelectionChange={(e) => setSelectedCell(e.value)} 
+        onCellSelect={onCellSelect} onCellUnselect={onCellUnselect}>
+            <Column field="device_serial_number" header="Device ID" />
+            <Column field="component_serial_number" header="Component ID" />
+            <Column field="subcomponent_serial_number" header="Sub Component ID" />
         </DataTable>
 
       </div>
