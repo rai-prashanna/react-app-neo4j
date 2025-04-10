@@ -7,6 +7,15 @@ import { Panel } from 'primereact/panel';
 import { Splitter, SplitterPanel } from 'primereact/splitter';
 
 // GraphQL queries
+
+const GET_TOTAL_DEVICES = gql`
+query DevicesAggregate {
+  devicesAggregate {
+    count
+  }
+}
+`;
+
 const GET_UNSERVICED_DEVICES_COMPONENTS = gql`
   query FindUnservicedDevicesOrComponentsOrSubComponentsWithHardCodedParameters {
     findUnservicedDevicesOrComponentsOrSubComponentsWithHardCodedParameters {
@@ -27,7 +36,8 @@ const GET_TOTAL_FARMS = gql`
 
 export default function UnServiceDevice() {
   const [unservicedDevices, setUnservicedDevices] = useState([]);
-  const [farmcount, setFarmcount] = useState(0);
+  const [farmCount, setFarmCount] = useState(0);
+  const [devicesCount, setDevicesCount] = useState(0);
 
   const {
     loading: farmsLoading,
@@ -39,28 +49,29 @@ export default function UnServiceDevice() {
   });
 
   const {
-    loading: devicesLoading,
-    error: devicesError,
-    data: devicesData,
+    loading: unServicedDevicesLoading,
+    error: unServicedDevicesError,
+    data: unServicedDevicesData,
   } = useQuery(GET_UNSERVICED_DEVICES_COMPONENTS, {
     fetchPolicy: "network-only",
   });
 
 
+
   useEffect(() => {
     console.log("Farms data:", farmsData);
-    console.log("Devices data:", devicesData);
+    console.log("Devices data:", unServicedDevicesData);
 
     if (farmsData?.farmsAggregate?.count !== undefined) {
-      setFarmcount(farmsData.farmsAggregate.count);
+      setFarmCount(farmsData.farmsAggregate.count);
     }
 
-    if (devicesData?.findUnservicedDevicesOrComponentsOrSubComponentsWithHardCodedParameters) {
-      setUnservicedDevices(devicesData.findUnservicedDevicesOrComponentsOrSubComponentsWithHardCodedParameters);
+    if (unServicedDevicesData?.findUnservicedDevicesOrComponentsOrSubComponentsWithHardCodedParameters) {
+      setUnservicedDevices(unServicedDevicesData.findUnservicedDevicesOrComponentsOrSubComponentsWithHardCodedParameters);
     }
-  }, [farmsData, devicesData]);
+  }, [farmsData, unServicedDevicesData]);
 
-  if (farmsLoading || devicesLoading) {
+  if (farmsLoading || unServicedDevicesLoading) {
     return (
       <div className="flex justify-content-center align-items-center" style={{ height: "300px" }}>
         <ProgressSpinner />
@@ -68,8 +79,8 @@ export default function UnServiceDevice() {
     );
   }
 
-  if (farmsError || devicesError) {
-    return <p>Error fetching data: {farmsError?.message || devicesError?.message}</p>;
+  if (farmsError || unServicedDevicesError) {
+    return <p>Error fetching data: {farmsError?.message || unServicedDevicesError?.message}</p>;
   }
 
   return (
@@ -77,7 +88,7 @@ export default function UnServiceDevice() {
       <Splitter style={{ height: '50px'}} className="mb-2 mt-4">
         <SplitterPanel className="flex align-items-center justify-content-center">
           <Panel header="Total Farms" style={{ height: '100%', width: '100%' }}>
-            <p className="m-0">{farmcount}</p>
+            <p className="m-0">{farmCount}</p>
           </Panel>
         </SplitterPanel>
         <SplitterPanel className="flex align-items-center justify-content-center">
