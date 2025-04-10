@@ -5,6 +5,9 @@ import { Column } from "primereact/column";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { Panel } from 'primereact/panel';
 import { Splitter, SplitterPanel } from 'primereact/splitter';
+import { Dropdown } from 'primereact/dropdown';
+import { FloatLabel } from 'primereact/floatlabel';
+
 
 // GraphQL queries
 
@@ -34,10 +37,20 @@ const GET_TOTAL_FARMS = gql`
   }
 `;
 
+const GET_DEVICE_TYPES = gql`
+query DevicesAggregate {
+  deviceTypes {
+    name
+  }
+}
+`;
+
 export default function UnServiceDevice() {
   const [unservicedDevices, setUnservicedDevices] = useState([]);
   const [farmCount, setFarmCount] = useState(0);
   const [devicesCount, setDevicesCount] = useState(0);
+  const [deviceTypes, setDeviceTypes] = useState([]);
+  const [selectedDeviceType, setSelectedDeviceType] = useState(null);
 
   const {
     loading: farmsLoading,
@@ -64,25 +77,41 @@ export default function UnServiceDevice() {
     fetchPolicy: "network-only",pollInterval: 5000,
   });
 
+  const {
+    loading: deviceTypesLoading,
+    error: deviceTypesError,
+    data: deviceTypesData,
+  } = useQuery(GET_DEVICE_TYPES, {
+    fetchPolicy: "network-only",pollInterval: 5000,
+  });
 
 
   useEffect(() => {
-    console.log("Farms data:", farmsData);
-    console.log("UnservicedDevices data:", unServicedDevicesData);
-    console.log("Devices data:", devicesData);
 
     if (farmsData?.farmsAggregate?.count !== undefined) {
+          console.log("Farms data:", farmsData);
+
       setFarmCount(farmsData.farmsAggregate.count);
     }
 
     if (devicesData?.devicesAggregate?.count !== undefined) {
       setDevicesCount(devicesData.devicesAggregate.count);
+      console.log("Devices data:", devicesData);
+
     }
 
     if (unServicedDevicesData?.findUnservicedDevicesOrComponentsOrSubComponentsWithHardCodedParameters) {
       setUnservicedDevices(unServicedDevicesData.findUnservicedDevicesOrComponentsOrSubComponentsWithHardCodedParameters);
+      console.log("UnservicedDevices data:", unServicedDevicesData);
+
     }
-  }, [farmsData, unServicedDevicesData,setDevicesCount]);
+    if (deviceTypesData?.deviceTypes) {
+      setDeviceTypes(deviceTypesData.deviceTypes);
+      console.log("Device types data:", deviceTypesData);
+
+    }
+    
+  }, [farmsData, unServicedDevicesData,devicesData,deviceTypesData]);
 
   if (farmsLoading || unServicedDevicesLoading) {
     return (
@@ -115,6 +144,12 @@ export default function UnServiceDevice() {
 
       <div className="card">
         <h2>Unserviced Devices</h2>
+{/*         <FloatLabel className="w-full md:w-14rem">  
+
+        </FloatLabel> */}
+        <Dropdown value={selectedDeviceType} onChange={(e) => setSelectedDeviceType(e.value)} options={deviceTypes} optionLabel="name" 
+                showClear placeholder="Select a Device Type" className="w-full md:w-16rem mb-4 mt-4" />
+                
         <DataTable value={unservicedDevices} showGridlines tableStyle={{ minWidth: "50rem" }}>
           <Column field="device_serial_number" header="Device ID" />
           <Column field="component_serial_number" header="Component ID" />
