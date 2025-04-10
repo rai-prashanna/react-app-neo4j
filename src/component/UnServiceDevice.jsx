@@ -56,20 +56,33 @@ export default function UnServiceDevice() {
     fetchPolicy: "network-only",
   });
 
+  const {
+    loading: devicesLoading,
+    error: devicesError,
+    data: devicesData,
+  } = useQuery(GET_TOTAL_DEVICES, {
+    fetchPolicy: "network-only",pollInterval: 5000,
+  });
+
 
 
   useEffect(() => {
     console.log("Farms data:", farmsData);
-    console.log("Devices data:", unServicedDevicesData);
+    console.log("UnservicedDevices data:", unServicedDevicesData);
+    console.log("Devices data:", devicesData);
 
     if (farmsData?.farmsAggregate?.count !== undefined) {
       setFarmCount(farmsData.farmsAggregate.count);
     }
 
+    if (devicesData?.devicesAggregate?.count !== undefined) {
+      setDevicesCount(devicesData.devicesAggregate.count);
+    }
+
     if (unServicedDevicesData?.findUnservicedDevicesOrComponentsOrSubComponentsWithHardCodedParameters) {
       setUnservicedDevices(unServicedDevicesData.findUnservicedDevicesOrComponentsOrSubComponentsWithHardCodedParameters);
     }
-  }, [farmsData, unServicedDevicesData]);
+  }, [farmsData, unServicedDevicesData,setDevicesCount]);
 
   if (farmsLoading || unServicedDevicesLoading) {
     return (
@@ -93,7 +106,7 @@ export default function UnServiceDevice() {
         </SplitterPanel>
         <SplitterPanel className="flex align-items-center justify-content-center">
           <Panel header="Total Devices" style={{ height: '100%', width: '100%' }}>
-            <p className="m-0">10</p>
+            <p className="m-0">{devicesCount}</p>
           </Panel>
         </SplitterPanel>
       </Splitter>
