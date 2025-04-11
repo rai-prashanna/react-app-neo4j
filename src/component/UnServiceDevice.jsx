@@ -81,7 +81,14 @@ const onCellUnselect = (event) => {
 
 const buttonClicked = (event) => {
   toast.current.show({ severity: 'info', summary: 'Button clicked', detail: `Search button was clicked`, life: 3000 });
+  if(selectedDeviceType!=null && selectedDeLavalSubscription!=null && serviceDate!=null && hardwareVersion!=null){
+    console.log("Selected Device Type:", selectedDeviceType.name);
+    console.log("Selected DeLaval Subscription:", selectedDeLavalSubscription.type);
+    console.log("Selected Service Date:", serviceDate);
+    console.log("Selected Hardware Version:", hardwareVersion);
+  }
 };
+
   const {
     loading: farmsLoading,
     error: farmsError,
@@ -196,7 +203,7 @@ const buttonClicked = (event) => {
     <div className="flex flex-wrap items-end gap-3 mb-4 mt-4">
       <Dropdown
         value={selectedDeviceType}
-        onChange={(e) => (e.value)}
+        onChange={(e) => setSelectedDeviceType(e.value)}
         options={deviceTypes}
         optionLabel="name"
         showClear
