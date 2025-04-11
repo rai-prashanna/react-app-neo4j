@@ -62,11 +62,11 @@ export default function UnServiceDevice() {
   const [devicesCount, setDevicesCount] = useState(0);
   const [deviceTypes, setDeviceTypes] = useState([]);
   const [selectedDeviceType, setSelectedDeviceType] = useState(null);
-  const [serviceDate, setServiceDate] = useState(null);
+  const [serviceDate, setServiceDate] = useState(new Date("2017-01-20"));
 
   const [deLavalSubscriptions, setDeLavalSubscriptions] = useState([]);
   const [selectedDeLavalSubscription, setselectedDeLavalSubscription] = useState(null);
-  const [hardwareVersion, setHardwareVersion] = useState(null);
+  const [hardwareVersion, setHardwareVersion] = useState(2.1);
 
   const [selectedCell, setSelectedCell] = useState(null);
   const toast = useRef(null);
@@ -124,7 +124,6 @@ const onCellUnselect = (event) => {
 
     if (farmsData?.farmsAggregate?.count !== undefined) {
           console.log("Farms data:", farmsData);
-
       setFarmCount(farmsData.farmsAggregate.count);
     }
 
@@ -141,13 +140,17 @@ const onCellUnselect = (event) => {
     }
     if (deviceTypesData?.deviceTypes) {
       setDeviceTypes(deviceTypesData.deviceTypes);
-      console.log("Device types data:", deviceTypesData);
-
+      console.log("Device types data:", deviceTypesData.deviceTypes);
+      if(selectedDeviceType === null)
+        setSelectedDeviceType(deviceTypesData.deviceTypes[16])
+     ;
     }
 
     if (deviceSubscriptionTypeData?.deLavalSubscriptions) {
       setDeLavalSubscriptions(deviceSubscriptionTypeData.deLavalSubscriptions);
       console.log("deLavalSubscriptionsdata:", deviceSubscriptionTypeData.deLavalSubscriptions);
+      if(selectedDeLavalSubscription === null)
+        setselectedDeLavalSubscription(deviceSubscriptionTypeData.deLavalSubscriptions[9])
     }
     
   }, [farmsData, unServicedDevicesData,devicesData,deviceTypesData,deviceSubscriptionTypeData]);
@@ -189,9 +192,9 @@ const onCellUnselect = (event) => {
     <div className="flex flex-wrap items-end gap-3 mb-4 mt-4">
       <Dropdown
         value={selectedDeviceType}
-        onChange={(e) => setSelectedDeviceType(e.value)}
+        onChange={(e) => (e.value)}
         options={deviceTypes}
-        optionLabel="device_type"
+        optionLabel="name"
         showClear
         placeholder="Select a device type"
         className="w-full md:w-16rem"
@@ -201,7 +204,7 @@ const onCellUnselect = (event) => {
         value={selectedDeLavalSubscription}
         onChange={(e) => setselectedDeLavalSubscription(e.value)}
         options={deLavalSubscriptions}
-        optionLabel="delaval_subscription_type"
+        optionLabel="type"
         showClear
         placeholder="Select a subscription"
         className="w-full md:w-16rem"
