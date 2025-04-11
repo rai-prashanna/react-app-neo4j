@@ -78,6 +78,10 @@ export default function UnServiceDevice() {
 const onCellUnselect = (event) => {
     toast.current.show({ severity: 'warn', summary: 'Cell Unselected', detail: `Name: ${event.value}`, life: 3000 });
 };
+
+const buttonClicked = (event) => {
+  toast.current.show({ severity: 'info', summary: 'Button clicked', detail: `Search button was clicked`, life: 3000 });
+};
   const {
     loading: farmsLoading,
     error: farmsError,
@@ -228,7 +232,7 @@ const onCellUnselect = (event) => {
         showIcon
       />
 
-      <Button label="Search" className="w-full md:w-5rem" />
+      <Button icon="pi pi-search"  label="Search" className="w-full md:w-7rem" onClick={() =>  buttonClicked()}/>
     </div>
 
     <DataTable
