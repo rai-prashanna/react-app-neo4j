@@ -14,7 +14,6 @@ import { Button } from 'primereact/button';
 import { Sidebar } from 'primereact/sidebar';
 
 // GraphQL queries
-
 const GET_TOTAL_DEVICES = gql`
 query DevicesAggregate {
   devicesAggregate {
@@ -95,7 +94,6 @@ export default function UnServiceDevice() {
   const [selectedCell, setSelectedCell] = useState(null);
   const toast = useRef(null);
   const [searchButton, setSearchButton] = useState(false);
-  const [searchParams, setSearchParams] = useState(null);
 
   const onCellSelect = (event) => {
     toast.current.show({ severity: 'info', summary: 'Cell Selected', detail: `Name: ${event.value}, index: ${event}`, life: 3000 });
@@ -185,18 +183,6 @@ const [fetchUnservicedDevices, {
 
 
   useEffect(() => {
-    // if (searchButton) {
-    //   fetchUnservicedDevices({
-    //     variables: {
-    //       hardwareVersion: hardwareVersion,
-    //       subscriptionType: selectedDeLavalSubscription.type,
-    //       deviceType: selectedDeviceType.name,
-    //       serviceDate: serviceDate,
-    //     },
-    //   });
-    //   setSearchButton(false);
-    // }   
-
     if (farmsData?.farmsAggregate?.count !== undefined) {
           console.log("Farms data:", farmsData);
       setFarmCount(farmsData.farmsAggregate.count);
@@ -262,8 +248,8 @@ const [fetchUnservicedDevices, {
   <Panel 
     header="Unserviced devices with their respective components and sub-components"
     className="mt-8 shadow-2 border-round"
-    style={{ width: '100%' }}
-  >
+    style={{ width: '100%' }}>
+
     <div className="flex flex-wrap items-end gap-3 mb-4 mt-4">
       <Dropdown
         value={selectedDeviceType}
@@ -294,29 +280,28 @@ const [fetchUnservicedDevices, {
         placeholder="Hardware version"
       />
 
-    <Calendar
-      inputId="service_date"
-      value={serviceDate}
-      onChange={(e) => {setServiceDate(e.value)}}
-      className="w-full md:w-16rem"
-      placeholder="Service date"
-      showIcon
-      dateFormat="yy-mm-dd"
-/>
+      <Calendar
+        inputId="service_date"
+        value={serviceDate}
+        onChange={(e) => {setServiceDate(e.value)}}
+        className="w-full md:w-16rem"
+        placeholder="Service date"
+        showIcon
+        dateFormat="yy-mm-dd"/>
 
-<Button
-  icon="pi pi-search"
-  label="Search"
-  className="w-full md:w-7rem"
-  onClick={() => buttonClicked()}
-  disabled={
-    !selectedDeviceType ||
-    !selectedDeLavalSubscription ||
-    !serviceDate ||
-    !hardwareVersion
-  }
-/>
-    </div>
+      <Button
+          icon="pi pi-search"
+          label="Search"
+          className="w-full md:w-7rem"
+          onClick={() => buttonClicked()}
+          disabled={
+            !selectedDeviceType ||
+            !selectedDeLavalSubscription ||
+            !serviceDate ||
+            !hardwareVersion
+          }/>
+
+</div>
 
     <DataTable
       value={unservicedDevices}
@@ -337,6 +322,7 @@ const [fetchUnservicedDevices, {
       <Column field="subcomponent_serial_number" header="Sub Component ID" />
     </DataTable>
   </Panel>
+
   <Sidebar visible={visibleRight} position="right" onHide={() => setVisibleRight(false)}>
                 <h2>Right Sidebar</h2>
                 <p>
