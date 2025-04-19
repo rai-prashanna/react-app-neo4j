@@ -9,8 +9,9 @@ import { Dropdown } from 'primereact/dropdown';
 import { Calendar } from 'primereact/calendar';
 import { InputNumber } from 'primereact/inputnumber';
 import { Toast } from 'primereact/toast'
-import { Button } from 'primereact/button';
 import { Sidebar } from 'primereact/sidebar';
+import { Button } from 'primereact/button';
+import { Divider } from 'primereact/divider';
 
 // GraphQL queries
 const GET_TOTAL_DEVICES = gql`
@@ -37,6 +38,18 @@ query FindUnservicedDevicesOrComponentsOrSubComponents($hardwareVersion: Float!,
     device_serial_number
     component_serial_number
     subcomponent_serial_number
+  }
+}
+`;
+
+const GET_DEVICE_DETAIL = gql`
+query Query($where: DeviceWhere) {
+  devices(where: $where) {
+    hardware_version
+    installed_at
+    label
+    serial_number
+    serviced_at
   }
 }
 `;
@@ -76,9 +89,13 @@ const formatDateToLocalISO = (date) => {
 };
 
 export default function UnServiceDevice() {
+  const [visible, setVisible] = useState(false);
+
   const [unservicedDevices, setUnservicedDevices] = useState([]);
   const [myUnservicedDevices, setMyUnservicedDevices] = useState([]);
   const [visibleRight, setVisibleRight] = useState(false);
+  const [device, setDevice] = useState([]);
+  const [selectedDeviceId, setSelectedDeviceId] = useState([]);
 
   const [farmCount, setFarmCount] = useState(0);
   const [devicesCount, setDevicesCount] = useState(0);
@@ -97,21 +114,73 @@ export default function UnServiceDevice() {
   const onCellSelect = (event) => {
     toast.current.show({ severity: 'info', summary: 'Cell Selected', detail: `Name: ${event.value}, column: ${event.field}`, life: 3000 });
     console.log(`Name: ${event.value}, column: ${event.field}`);
-
+    setSelectedDeviceId(event.value);
+    if(event.field=== "device_serial_number"){ 
+      fetchDeviceDetail();
+      setVisible(visible => !visible);
+      }
 };
+
+// const customHeader = (
+//   <div className="flex justify-content-between align-items-center w-full bg-red-500">
+//       <span className="font-bold text-lg ">Device details</span>
+//       <Button icon="pi pi-times" className="p-button-rounded p-button-text" onClick={() => setVisible(false)} />
+//   </div>
+// );
+
+
+const customHeader = (
+  <div className="w-full bg-blue-500">
+      <div className="flex items-center w-full px-4 py-3">
+          <span className="font-bold text-lg text-white">Device details</span>
+          <button 
+              onClick={() => setVisible(false)} 
+              className="ml-auto text-white bg-transparent border-none text-xl cursor-pointer"
+          >
+              <i className="pi pi-times" />
+          </button>
+      </div>
+      <Divider className="m-0" />
+  </div>
+);
 
 const onCellUnselect = (event) => {
     toast.current.show({ severity: 'warn', summary: 'Cell Unselected', detail: `Name: ${event.value} , column: ${event.field}`, life: 3000 });
+    setVisible(visible => !visible);
 };
 
 const buttonClicked = (event) => {
   toast.current.show({ severity: 'info', summary: 'Button clicked', detail: `Search button was clicked`, life: 3000 });
-  
   if(selectedDeviceType!=null && selectedDeLavalSubscription!=null && serviceDate!=null && hardwareVersion!=null){
     setSearchButton(true);
     fetchUnservicedDevices();
   }
 };
+
+const [fetchDeviceDetail, {
+  loading: deviceDetailLoading,
+  error: deviceDetailError,
+  data: deviceDetailData,
+}] = useLazyQuery(GET_DEVICE_DETAIL, {
+  fetchPolicy: "network-only",
+  onCompleted: (data) => {
+    console.log("get device details data:", data);
+    toast.current.show({ severity: 'success', summary: 'Success', detail: 'Device detail fetched successfully', life: 3000 });
+    data.devices.map((device) => {
+      console.log("device details:", device);
+      setDevice(device);
+    });
+  },
+  onError: (error) => {
+    console.error("Error fetching unserviced devices:", error);
+    toast.current.show({ severity: 'error', summary: 'Error', detail: error.message, life: 3000 });
+  },
+  variables: {
+    "where": {
+      "serial_number_EQ": selectedDeviceId
+    }
+  },
+});
 
 const [fetchUnservicedDevices, {
   loading: unMyServicedDevicesLoading,
@@ -323,13 +392,24 @@ const [fetchUnservicedDevices, {
     </DataTable>
   </Panel>
 
-  <Sidebar visible={visibleRight} position="right" onHide={() => setVisibleRight(false)}>
-                <h2>Right Sidebar</h2>
-                <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                </p>
-  </Sidebar>
+  <div className="card flex justify-content-center">
+              <Sidebar 
+                  position="right" 
+                  visible={visible} 
+                  onHide={() => setVisible(false)} 
+                  showCloseIcon={false}
+                  header={customHeader}
+                  style={{ width: '27%' }}
+              >
+                  <Divider className="w-full mt-3 mb-3" />
+                    <p><span class="label">Serial number:</span> {device.serial_number}</p>
+                    <p><span class="label">Label:</span> {device.label}</p>
+                    <p><span class="label">Hardware version:</span> {device.hardware_version}</p>
+                    <p><span class="label">Installed date:</span> {device.installed_at}</p>
+                    <p><span class="label">Serviced date:</span>{device.serviced_at}</p>
+              </Sidebar>
+              <Button icon="pi pi-plus" onClick={() => setVisible(true)} />
+          </div>
 </div>
 
 
