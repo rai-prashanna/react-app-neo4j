@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import Product from './Product';
 import './index.css';
 import './flags.css';
 import './App.css';
 import reportWebVitals from './reportWebVitals';
 import UnServiceDevice from './component/UnServiceDevice';
+import Parent from './component/Parent';
 import {
   ApolloClient,
   InMemoryCache,
@@ -13,11 +13,13 @@ import {
   makeVar,
 } from "@apollo/client";
 
-import 'primeflex/primeflex.css';
 import 'primeicons/primeicons.css';
 import 'primeflex/primeflex.css';
-import 'primereact/resources/primereact.css';
-import 'primereact/resources/themes/bootstrap4-light-blue/theme.css';
+// Core PrimeReact styles
+import 'primereact/resources/primereact.min.css';
+
+// Choose ONE theme
+import 'primereact/resources/themes/saga-blue/theme.css';  // Saga Blue Theme
 
 const client = new ApolloClient({
   uri: "http://localhost:4000",

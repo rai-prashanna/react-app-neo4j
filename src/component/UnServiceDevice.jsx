@@ -6,7 +6,6 @@ import { ProgressSpinner } from "primereact/progressspinner";
 import { Panel } from 'primereact/panel';
 import { Splitter, SplitterPanel } from 'primereact/splitter';
 import { Dropdown } from 'primereact/dropdown';
-import { FloatLabel } from 'primereact/floatlabel';
 import { Calendar } from 'primereact/calendar';
 import { InputNumber } from 'primereact/inputnumber';
 import { Toast } from 'primereact/toast'
@@ -231,13 +230,13 @@ const [fetchUnservicedDevices, {
   return (
 <div>
   <Splitter style={{ height: '50px'}} className="mb-2 mt-4">
-    <SplitterPanel className="flex align-items-center justify-content-center">
-      <Panel header="Total Farms" style={{ height: '100%', width: '100%'}}>
+    <SplitterPanel className="flex bg-primary align-items-center justify-content-center">
+      <Panel header="Total Farms" style={{ height: '100%', width: '100%'}} className="mypanel">
         <p className="m-0">{farmCount}</p>
       </Panel>
     </SplitterPanel>
     <SplitterPanel className="flex align-items-center justify-content-center">
-      <Panel header="Total Devices" style={{ height: '100%', width: '100%' }}>
+      <Panel header="Total Devices" style={{ height: '100%', width: '100%' }} className="mypanel">
         <p className="m-0">{devicesCount}</p>
       </Panel>
     </SplitterPanel>
@@ -247,7 +246,7 @@ const [fetchUnservicedDevices, {
 
   <Panel 
     header="Unserviced devices with their respective components and sub-components"
-    className="mt-8 shadow-2 border-round"
+    className="mt-8 shadow-2 border-round mypanel"
     style={{ width: '100%' }}>
 
     <div className="flex flex-wrap items-end gap-3 mb-4 mt-4">
@@ -316,6 +315,7 @@ const [fetchUnservicedDevices, {
       onSelectionChange={(e) => setSelectedCell(e.value)}
       onCellSelect={onCellSelect}
       onCellUnselect={onCellUnselect}
+      className="mypanel"
     >
       <Column field="device_serial_number" header="Device ID" />
       <Column field="component_serial_number" header="Component ID" />
