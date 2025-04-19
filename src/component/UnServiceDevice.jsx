@@ -95,13 +95,13 @@ export default function UnServiceDevice() {
   const [searchButton, setSearchButton] = useState(false);
 
   const onCellSelect = (event) => {
-    toast.current.show({ severity: 'info', summary: 'Cell Selected', detail: `Name: ${event.value}, index: ${event}`, life: 3000 });
-    console.log(`Name: ${event.value}, index: ${event.index}, field: ${event.field}`);
+    toast.current.show({ severity: 'info', summary: 'Cell Selected', detail: `Name: ${event.value}, column: ${event.field}`, life: 3000 });
+    console.log(`Name: ${event.value}, column: ${event.field}`);
 
 };
 
 const onCellUnselect = (event) => {
-    toast.current.show({ severity: 'warn', summary: 'Cell Unselected', detail: `Name: ${event.value} , index: ${event.index}`, life: 3000 });
+    toast.current.show({ severity: 'warn', summary: 'Cell Unselected', detail: `Name: ${event.value} , column: ${event.field}`, life: 3000 });
 };
 
 const buttonClicked = (event) => {
