@@ -1,10 +1,16 @@
 /* .custompanel.css */
 .mypanel .p-panel-header {
-    background-color: #2196f3;
+    background-color: #3b82f6;
     color: #ffffff;
 }
         
 .mypanel .p-datatable-thead th{
+    background-color: #3b82f6;
+    color: #ffffff;
+}
+
+
+.mypanel p-sidebar-header p-sidebar-custom-header span{
     background-color: #2196f3;
     color: #ffffff;
 }

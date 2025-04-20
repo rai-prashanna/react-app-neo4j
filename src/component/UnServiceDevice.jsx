@@ -109,6 +109,7 @@ const formatDateToLocalISO = (date) => {
 
 export default function UnServiceDevice() {
   const [visible, setVisible] = useState(false);
+  const [headerName, setHeaderName] = useState("Device details");
 
   const [unservicedDevices, setUnservicedDevices] = useState([]);
   const [myUnservicedDevices, setMyUnservicedDevices] = useState([]);
@@ -145,14 +146,28 @@ export default function UnServiceDevice() {
     setSelectedDeviceId(event.value);
     if (event.field === "device_serial_number") {
       fetchDeviceDetail();
+      setComponent(null);
       setVisible((visible) => !visible);
     }
+    else if (event.field === "component_serial_number") {
+      fetchComponentDetail();
+      setHeaderName("Component details");
+      setDevice(null);
+      setVisible((visible) => !visible);
+    }
+    else if (event.field === "subcomponent_serial_number") {
+      fetchComponentDetail();
+      setDevice(null);
+      setHeaderName("Sub-component details");
+      setVisible((visible) => !visible);
+    }
+    console.log("Selected cell:", event.value);
   };
   
   const customHeader = (
     <div className="w-full bg-blue-500">
       <div className="flex items-center w-full px-4 py-3">
-        <span className="font-bold text-lg text-white">Device details</span>
+        <span className="font-bold text-lg text-white">{headerName}</span>
         <button
           onClick={() => { setSelectedCell(null); setVisible(false); }}
           className="ml-auto text-white bg-transparent border-none text-xl cursor-pointer"
@@ -423,32 +438,32 @@ export default function UnServiceDevice() {
 
   return (
     <div>
-      <Splitter style={{ height: "50px" }} className="mb-2 mt-4">
+      <Splitter style={{ height: "50px" }} className="mb-8 mt-4 h-6rem ">
         <SplitterPanel className="flex bg-primary align-items-center justify-content-center">
           <Panel
             header="Total Farms"
             style={{ height: "100%", width: "100%" }}
-            className="mypanel"
+            className="mypanel align-items-center"
           >
-            <p className="m-0">{farmCount}</p>
+            <p className="m-0 text-6xl text-left	">{farmCount}</p>
           </Panel>
         </SplitterPanel>
         <SplitterPanel className="flex align-items-center justify-content-center">
           <Panel
             header="Total Devices"
             style={{ height: "100%", width: "100%" }}
-            className="mypanel"
+            className="mypanel align-items-center"
           >
-            <p className="m-0">{devicesCount}</p>
+            <p className="m-0 text-6xl text-left	">{devicesCount}</p>
           </Panel>
         </SplitterPanel>
-      </Splitter>
+      </Splitter >
 
       <Toast ref={toast} />
 
       <Panel
         header="Unserviced devices with their respective components and sub-components"
-        className="mt-8 shadow-2 border-round mypanel"
+        className="mt-8  shadow-2 border-round mypanel"
         style={{ width: "100%" }}
       >
         <div className="flex flex-wrap items-end gap-3 mb-4 mt-4">
@@ -565,14 +580,6 @@ export default function UnServiceDevice() {
             <span className="ml-auto">{device.serviced_at}</span>
           </p>
         </Sidebar>
-
-{/* <Sidebar visible={visible} position="right" onHide={() => setSelectedCell(null)} header={customHeader}>
-    <h2>Right Sidebar</h2>
-    <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-    </p>
-</Sidebar> */}
       </div>
     </div>
   );

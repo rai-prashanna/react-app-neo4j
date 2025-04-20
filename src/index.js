@@ -5,6 +5,9 @@ import './flags.css';
 import './App.css';
 import reportWebVitals from './reportWebVitals';
 import UnServiceDevice from './component/UnServiceDevice';
+import Main from './component/Main';
+import AppBar from './component/AppBar';
+
 import Parent from './component/Parent';
 import {
   ApolloClient,
@@ -30,7 +33,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
       <ApolloProvider client={client}>
-      <UnServiceDevice/>
+      <Main/>
     </ApolloProvider>
   </React.StrictMode>
 );
