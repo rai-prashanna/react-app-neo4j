@@ -543,7 +543,7 @@ export default function UnServiceDevice() {
         </DataTable>
       </Panel>
       {
-                <div className="card flex justify-content-center">
+                <div class="card flex justify-content-center">
 
                 <Sidebar
                   position="right"
@@ -554,7 +554,7 @@ export default function UnServiceDevice() {
                   }}
                   showCloseIcon={false}
                   header={customHeader}
-                  style={{ width: "27%" }}
+                  style={{ width: "27%", height: "27%",top: "60px",  marginTop: "25px",position: "absolute" }}
                 >
                   <Divider className="w-full mt-3 mb-3" />
                   <p className="flex w-full">
