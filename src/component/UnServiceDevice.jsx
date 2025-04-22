@@ -114,8 +114,8 @@ export default function UnServiceDevice() {
   const [unservicedDevices, setUnservicedDevices] = useState([]);
   const [myUnservicedDevices, setMyUnservicedDevices] = useState([]);
   const [visibleRight, setVisibleRight] = useState(false);
-  const [device, setDevice] = useState([]);
-  const [component, setComponent] = useState([]);
+  const [device, setDevice] = useState(null);
+  const [component, setComponent] = useState(null);
 
   const [selectedDeviceId, setSelectedDeviceId] = useState([]);
   const [selectedComponentId, setSelectedComponentId] = useState([]);
@@ -136,30 +136,25 @@ export default function UnServiceDevice() {
   const [searchButton, setSearchButton] = useState(false);
 
   const onCellSelect = (event) => {
-    // toast.current.show({
-    //   severity: "info",
-    //   summary: "Cell Selected",
-    //   detail: `Name: ${event.value}, column: ${event.field}`,
-    //   life: 3000,
-    // });
     console.log(`Name: ${event.value}, column: ${event.field}`);
     setSelectedDeviceId(event.value);
     if (event.field === "device_serial_number") {
+      setHeaderName("Device details");
       fetchDeviceDetail();
       setComponent(null);
-      setVisible((visible) => !visible);
+      // setVisible((visible) => !visible);
     }
     else if (event.field === "component_serial_number") {
       fetchComponentDetail();
       setHeaderName("Component details");
       setDevice(null);
-      setVisible((visible) => !visible);
+      // setVisible((visible) => !visible);
     }
     else if (event.field === "subcomponent_serial_number") {
       fetchComponentDetail();
       setDevice(null);
       setHeaderName("Sub-component details");
-      setVisible((visible) => !visible);
+      // setVisible((visible) => !visible);
     }
     console.log("Selected cell:", event.value);
   };
@@ -223,6 +218,7 @@ export default function UnServiceDevice() {
       data.components.map((component) => {
         console.log("component details:", component);
         setComponent(component);
+        setVisible(true);
       });
     },
     onError: (error) => {
@@ -262,6 +258,7 @@ export default function UnServiceDevice() {
       data.devices.map((device) => {
         console.log("device details:", device);
         setDevice(device);
+        setVisible(true);
       });
     },
     onError: (error) => {
@@ -545,42 +542,66 @@ export default function UnServiceDevice() {
           />
         </DataTable>
       </Panel>
+      {
+                <div className="card flex justify-content-center">
 
-      <div className="card flex justify-content-center">
-        <Sidebar
-          position="right"
-          visible={visible}
-          onHide={() => {
-            console.log("Sidebar closed");
-            onCellUnselect(); // Reset the selected cell state setVisible(false);
-          }}
-          showCloseIcon={false}
-          header={customHeader}
-          style={{ width: "27%" }}
-        >
-          <Divider className="w-full mt-3 mb-3" />
-          <p className="flex w-full">
-            <span className="label font-semibold">Serial number:</span>
-            <span className="ml-auto">{device.serial_number}</span>
-          </p>
-          <p className="flex w-full">
-            <span className="label font-semibold">Label:</span>
-            <span className="ml-auto">{device.label}</span>
-          </p>
-          <p className="flex w-full">
-            <span className="label font-semibold">Hardware version:</span>
-            <span className="ml-auto">{device.hardware_version}</span>
-          </p>
-          <p className="flex w-full">
-            <span className="label font-semibold">Installed date:</span>
-            <span className="ml-auto">{device.installed_at}</span>
-          </p>
-          <p className="flex w-full">
-            <span className="label font-semibold">Serviced date:</span>
-            <span className="ml-auto">{device.serviced_at}</span>
-          </p>
-        </Sidebar>
-      </div>
+                <Sidebar
+                  position="right"
+                  visible={visible}
+                  onHide={() => {
+                    console.log("Sidebar closed");
+                    onCellUnselect(); // Reset the selected cell state setVisible(false);
+                  }}
+                  showCloseIcon={false}
+                  header={customHeader}
+                  style={{ width: "27%" }}
+                >
+                  <Divider className="w-full mt-3 mb-3" />
+                  <p className="flex w-full">
+                    <span className="label font-semibold">Serial number:</span>
+                    {headerName==="Device details" ? (
+                      <span className="ml-auto">{device!=null ?device.serial_number : ""}</span>
+                    ) : (
+                      <span className="ml-auto">{component!=null ?component.serial_number : ""}</span>
+                    )}
+                  </p>
+                  <p className="flex w-full">
+                    <span className="label font-semibold">Label:</span>
+                    {headerName==="Device details" ? (
+                      <span className="ml-auto">{device!=null ?device.label : ""}</span>
+                    ) : (
+                      <span className="ml-auto">{component!=null ?component.label : ""}</span>
+                    )}
+                  </p>
+                  {headerName==="Device details" ? (
+                      <p className="flex w-full">
+                      <span className="label font-semibold">Hardware version:</span>
+                      <span className="ml-auto">{device!=null ?device.hardware_version : ""}</span>
+                    </p>
+                    ) : (
+                    null
+                    )}
+                  
+                  <p className="flex w-full">
+                    <span className="label font-semibold">Installed date:</span>
+                    {headerName==="Device details" ? (
+                      <span className="ml-auto">{device!=null ?device.installed_at : ""}</span>
+                    ) : (
+                      <span className="ml-auto">{component!=null ?component.installed_at : ""}</span>
+                    )}
+                  </p>
+                  <p className="flex w-full">
+                    <span className="label font-semibold">Serviced date:</span>
+                    {headerName==="Device details" ? (
+                      <span className="ml-auto">{device!=null ?device.serviced_at : ""}</span>
+                    ) : (
+                      <span className="ml-auto">{component!=null ?component.serviced_at : ""}</span>
+                    )}
+                  </p>
+                </Sidebar>
+              </div>
+        }
+
     </div>
   );
 }

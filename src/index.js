@@ -7,7 +7,6 @@ import reportWebVitals from './reportWebVitals';
 import UnServiceDevice from './component/UnServiceDevice';
 import Main from './component/Main';
 import AppBar from './component/AppBar';
-
 import Parent from './component/Parent';
 import {
   ApolloClient,
