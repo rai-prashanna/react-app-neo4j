@@ -556,7 +556,7 @@ export default function UnServiceDevice() {
                   header={customHeader}
                   style={{ width: "27%", height: "27%",top: "60px",  marginTop: "25px",position: "absolute" }}
                 >
-                  <Divider className="w-full mt-3 mb-3" />
+                  <Divider className="w-full mt-0 mb-3" />
                   <p className="flex w-full">
                     <span className="label font-semibold">Serial number:</span>
                     {headerName==="Device details" ? (
