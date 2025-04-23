@@ -17,7 +17,7 @@ export default function AppBar() {
       <div className="flex align-items-center gap-3">
         <Button icon="pi pi-bell" className="text-white p-button-text p-button-rounded" />
         <Button icon="pi pi-cog" className="text-white p-button-text p-button-rounded" />
-        <Avatar label="P" shape="circle" size="large" />
+        <Avatar label="P" shape="circle" size="medium" image="/profile.png"/>
       </div>
     </div>
   );
