@@ -65,14 +65,14 @@ const GET_DEVICE_DETAIL = gql`
 `;
 
 const GET_COMPONENT_DETAIL = gql`
-query Components($where: ComponentWhere) {
-  components(where: $where) {
-    serial_number
-    label
-    installed_at
-    serviced_at
+  query Components($where: ComponentWhere) {
+    components(where: $where) {
+      serial_number
+      label
+      installed_at
+      serviced_at
+    }
   }
-}
 `;
 
 const GET_TOTAL_FARMS = gql`
@@ -98,6 +98,13 @@ const GET_DELAVAL_SUBSCRIPTION_TYPES = gql`
     }
   }
 `;
+const GET_DELAVAL_SUBSCRIPTION_COUNT = gql`
+  query DeLavalSubscriptionsAggregate {
+    deLavalSubscriptionsConnection {
+      totalCount
+    }
+  }
+`;
 
 // Utility to format a JS Date to YYYY-MM-DD in local time
 const formatDateToLocalISO = (date) => {
@@ -113,7 +120,6 @@ export default function UnServiceDevice() {
 
   const [unservicedDevices, setUnservicedDevices] = useState([]);
   const [myUnservicedDevices, setMyUnservicedDevices] = useState([]);
-  const [visibleRight, setVisibleRight] = useState(false);
   const [device, setDevice] = useState(null);
   const [component, setComponent] = useState(null);
 
@@ -122,6 +128,8 @@ export default function UnServiceDevice() {
 
   const [farmCount, setFarmCount] = useState(0);
   const [devicesCount, setDevicesCount] = useState(0);
+  const [delavalSubscriptionsCount, setDelavalSubscriptionsCount] = useState(0);
+
   const [deviceTypes, setDeviceTypes] = useState([]);
   const [selectedDeviceType, setSelectedDeviceType] = useState(null);
   const [serviceDate, setServiceDate] = useState(new Date("2017-01-20"));
@@ -143,14 +151,12 @@ export default function UnServiceDevice() {
       fetchDeviceDetail();
       setComponent(null);
       // setVisible((visible) => !visible);
-    }
-    else if (event.field === "component_serial_number") {
+    } else if (event.field === "component_serial_number") {
       fetchComponentDetail();
       setHeaderName("Component details");
       setDevice(null);
       // setVisible((visible) => !visible);
-    }
-    else if (event.field === "subcomponent_serial_number") {
+    } else if (event.field === "subcomponent_serial_number") {
       fetchComponentDetail();
       setDevice(null);
       setHeaderName("Sub-component details");
@@ -158,13 +164,16 @@ export default function UnServiceDevice() {
     }
     console.log("Selected cell:", event.value);
   };
-  
+
   const customHeader = (
     <div className="w-full bg-blue-500">
       <div className="flex items-center w-full px-4 py-3">
         <span className="font-bold text-lg text-white">{headerName}</span>
         <button
-          onClick={() => { setSelectedCell(null); setVisible(false); }}
+          onClick={() => {
+            setSelectedCell(null);
+            setVisible(false);
+          }}
           className="ml-auto text-white bg-transparent border-none text-xl cursor-pointer"
         >
           <i className="pi pi-times" />
@@ -182,7 +191,7 @@ export default function UnServiceDevice() {
     //   life: 3000,
     // });
     console.log(`onCellUnselect`);
-    setSelectedCell(null)
+    setSelectedCell(null);
     setVisible((visible) => !visible);
   };
 
@@ -236,7 +245,6 @@ export default function UnServiceDevice() {
       },
     },
   });
-
 
   const [
     fetchDeviceDetail,
@@ -345,6 +353,15 @@ export default function UnServiceDevice() {
   });
 
   const {
+    loading: subscriptionLoading,
+    error: subscriptionError,
+    data: totalSubscription,
+  } = useQuery(GET_DELAVAL_SUBSCRIPTION_COUNT, {
+    fetchPolicy: "network-only",
+    pollInterval: 5000000,
+  });
+
+  const {
     loading: unServicedDevicesLoading,
     error: unServicedDevicesError,
     data: unServicedDevicesData,
@@ -372,6 +389,19 @@ export default function UnServiceDevice() {
     if (farmsData?.farmsAggregate?.count !== undefined) {
       console.log("Farms data:", farmsData);
       setFarmCount(farmsData.farmsAggregate.count);
+    }
+
+    if (
+      totalSubscription?.deLavalSubscriptionsConnection?.totalCount !==
+      undefined
+    ) {
+      console.log(
+        "Subscription data:",
+        totalSubscription.deLavalSubscriptionsConnection.totalCount
+      );
+      setDelavalSubscriptionsCount(
+        totalSubscription.deLavalSubscriptionsConnection.totalCount
+      );
     }
 
     if (devicesData?.devicesAggregate?.count !== undefined) {
@@ -436,7 +466,10 @@ export default function UnServiceDevice() {
   return (
     <div>
       <Splitter style={{ height: "50px" }} className="mb-8 mt-4 h-6rem ">
-        <SplitterPanel className="flex bg-primary align-items-center justify-content-center">
+        <SplitterPanel
+          size={33.33}
+          className="flex bg-primary align-items-center justify-content-center"
+        >
           <Panel
             header="Total Farms"
             style={{ height: "100%", width: "100%" }}
@@ -445,7 +478,10 @@ export default function UnServiceDevice() {
             <p className="m-0 text-6xl text-left	">{farmCount}</p>
           </Panel>
         </SplitterPanel>
-        <SplitterPanel className="flex align-items-center justify-content-center">
+        <SplitterPanel
+          size={33.33}
+          className="flex align-items-center justify-content-center"
+        >
           <Panel
             header="Total Devices"
             style={{ height: "100%", width: "100%" }}
@@ -454,7 +490,21 @@ export default function UnServiceDevice() {
             <p className="m-0 text-6xl text-left	">{devicesCount}</p>
           </Panel>
         </SplitterPanel>
-      </Splitter >
+        <SplitterPanel
+          size={33.33}
+          className="flex align-items-center justify-content-center"
+        >
+          <Panel
+            header="Total Subscriptions"
+            style={{ height: "100%", width: "100%" }}
+            className="mypanel align-items-center"
+          >
+            <p className="m-0 text-6xl text-left	">
+              {delavalSubscriptionsCount}
+            </p>
+          </Panel>
+        </SplitterPanel>
+      </Splitter>
 
       <Toast ref={toast} />
 
@@ -543,65 +593,85 @@ export default function UnServiceDevice() {
         </DataTable>
       </Panel>
       {
-                <div class="card flex justify-content-center">
+        <div class="card flex justify-content-center">
+          <Sidebar
+            position="right"
+            visible={visible}
+            onHide={() => {
+              console.log("Sidebar closed");
+              onCellUnselect(); // Reset the selected cell state setVisible(false);
+            }}
+            showCloseIcon={false}
+            header={customHeader}
+            style={{
+              width: "27%",
+              height: "27%",
+              top: "60px",
+              marginTop: "25px",
+              position: "absolute",
+            }}
+          >
+            <Divider className="w-full mt-0 mb-3" />
+            <p className="flex w-full">
+              <span className="label font-semibold">Serial number:</span>
+              {headerName === "Device details" ? (
+                <span className="ml-auto">
+                  {device != null ? device.serial_number : ""}
+                </span>
+              ) : (
+                <span className="ml-auto">
+                  {component != null ? component.serial_number : ""}
+                </span>
+              )}
+            </p>
+            <p className="flex w-full">
+              <span className="label font-semibold">Label:</span>
+              {headerName === "Device details" ? (
+                <span className="ml-auto">
+                  {device != null ? device.label : ""}
+                </span>
+              ) : (
+                <span className="ml-auto">
+                  {component != null ? component.label : ""}
+                </span>
+              )}
+            </p>
+            {headerName === "Device details" ? (
+              <p className="flex w-full">
+                <span className="label font-semibold">Hardware version:</span>
+                <span className="ml-auto">
+                  {device != null ? device.hardware_version : ""}
+                </span>
+              </p>
+            ) : null}
 
-                <Sidebar
-                  position="right"
-                  visible={visible}
-                  onHide={() => {
-                    console.log("Sidebar closed");
-                    onCellUnselect(); // Reset the selected cell state setVisible(false);
-                  }}
-                  showCloseIcon={false}
-                  header={customHeader}
-                  style={{ width: "27%", height: "27%",top: "60px",  marginTop: "25px",position: "absolute" }}
-                >
-                  <Divider className="w-full mt-0 mb-3" />
-                  <p className="flex w-full">
-                    <span className="label font-semibold">Serial number:</span>
-                    {headerName==="Device details" ? (
-                      <span className="ml-auto">{device!=null ?device.serial_number : ""}</span>
-                    ) : (
-                      <span className="ml-auto">{component!=null ?component.serial_number : ""}</span>
-                    )}
-                  </p>
-                  <p className="flex w-full">
-                    <span className="label font-semibold">Label:</span>
-                    {headerName==="Device details" ? (
-                      <span className="ml-auto">{device!=null ?device.label : ""}</span>
-                    ) : (
-                      <span className="ml-auto">{component!=null ?component.label : ""}</span>
-                    )}
-                  </p>
-                  {headerName==="Device details" ? (
-                      <p className="flex w-full">
-                      <span className="label font-semibold">Hardware version:</span>
-                      <span className="ml-auto">{device!=null ?device.hardware_version : ""}</span>
-                    </p>
-                    ) : (
-                    null
-                    )}
-                  
-                  <p className="flex w-full">
-                    <span className="label font-semibold">Installed date:</span>
-                    {headerName==="Device details" ? (
-                      <span className="ml-auto">{device!=null ?device.installed_at : ""}</span>
-                    ) : (
-                      <span className="ml-auto">{component!=null ?component.installed_at : ""}</span>
-                    )}
-                  </p>
-                  <p className="flex w-full">
-                    <span className="label font-semibold">Serviced date:</span>
-                    {headerName==="Device details" ? (
-                      <span className="ml-auto">{device!=null ?device.serviced_at : ""}</span>
-                    ) : (
-                      <span className="ml-auto">{component!=null ?component.serviced_at : ""}</span>
-                    )}
-                  </p>
-                </Sidebar>
-              </div>
-        }
-
+            <p className="flex w-full">
+              <span className="label font-semibold">Installed date:</span>
+              {headerName === "Device details" ? (
+                <span className="ml-auto">
+                  {device != null ? device.installed_at : ""}
+                </span>
+              ) : (
+                <span className="ml-auto">
+                  {component != null ? component.installed_at : ""}
+                </span>
+              )}
+            </p>
+            <p className="flex w-full">
+              <span className="label font-semibold">Serviced date:</span>
+              {headerName === "Device details" ? (
+                <span className="ml-auto">
+                  {device != null ? device.serviced_at : ""}
+                </span>
+              ) : (
+                <span className="ml-auto">
+                  {component != null ? component.serviced_at : ""}
+                </span>
+              )}
+            </p>
+          </Sidebar>
+        </div>
+      }
     </div>
   );
 }
