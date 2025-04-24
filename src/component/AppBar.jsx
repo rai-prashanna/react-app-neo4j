@@ -5,7 +5,7 @@ import { InputText } from "primereact/inputtext";
 
 export default function AppBar() {
   return (
-    <div className="bg-blue-500 flex align-items-center justify-content-between px-4 py-2 surface-0 shadow-2">
+    <div className="bg-blue-500 flex align-items-center justify-content-between px-4 py-2 surface-0 shadow-2 mb-4">
       
       {/* Left: Logo / App Name */}
       <div className="flex align-items-center gap-2">

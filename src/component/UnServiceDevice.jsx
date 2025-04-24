@@ -12,6 +12,9 @@ import { Toast } from "primereact/toast";
 import { Sidebar } from "primereact/sidebar";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {GraphQLService } from "../service/GraphQLService";
+
 
 // GraphQL queries
 const GET_TOTAL_DEVICES = gql`
@@ -465,11 +468,9 @@ export default function UnServiceDevice() {
 
   return (
     <div>
-      <Splitter style={{ height: "50px" }} className="mb-8 mt-4 h-6rem ">
-        <SplitterPanel
-          size={33.33}
-          className="flex bg-primary align-items-center justify-content-center"
-        >
+      <div class="grid">
+        <div class="col">
+          <div class="text-center font-bold">
           <Panel
             header="Total Farms"
             style={{ height: "100%", width: "100%" }}
@@ -477,11 +478,10 @@ export default function UnServiceDevice() {
           >
             <p className="m-0 text-6xl text-left	">{farmCount}</p>
           </Panel>
-        </SplitterPanel>
-        <SplitterPanel
-          size={33.33}
-          className="flex align-items-center justify-content-center"
-        >
+          </div>
+        </div>
+        <div class="col">
+          <div class="text-center font-bold ">
           <Panel
             header="Total Devices"
             style={{ height: "100%", width: "100%" }}
@@ -489,11 +489,10 @@ export default function UnServiceDevice() {
           >
             <p className="m-0 text-6xl text-left	">{devicesCount}</p>
           </Panel>
-        </SplitterPanel>
-        <SplitterPanel
-          size={33.33}
-          className="flex align-items-center justify-content-center"
-        >
+          </div>
+        </div>
+        <div class="col">
+          <div class="text-center font-bold ">
           <Panel
             header="Total Subscriptions"
             style={{ height: "100%", width: "100%" }}
@@ -503,14 +502,15 @@ export default function UnServiceDevice() {
               {delavalSubscriptionsCount}
             </p>
           </Panel>
-        </SplitterPanel>
-      </Splitter>
+          </div>
+        </div>
+      </div>
 
       <Toast ref={toast} />
 
       <Panel
         header="Unserviced devices with their respective components and sub-components"
-        className="mt-8  shadow-2 border-round mypanel"
+        className="mt-2  shadow-2 border-round mypanel"
         style={{ width: "100%" }}
       >
         <div className="flex flex-wrap items-end gap-3 mb-4 mt-4">
@@ -574,7 +574,7 @@ export default function UnServiceDevice() {
           showGridlines
           tableStyle={{ minWidth: "50rem" }}
           paginator
-          rows={5}
+          rows={10}
           rowsPerPageOptions={[5, 10, 25, 50]}
           cellSelection
           selectionMode="single"
@@ -675,4 +675,3 @@ export default function UnServiceDevice() {
     </div>
   );
 }
-// component_serial_number
