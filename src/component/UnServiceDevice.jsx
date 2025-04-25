@@ -12,9 +12,8 @@ import { Toast } from "primereact/toast";
 import { Sidebar } from "primereact/sidebar";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {GraphQLService } from "../service/GraphQLService";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { GraphQLService } from "../service/GraphQLService";
 
 // GraphQL queries
 const GET_TOTAL_DEVICES = gql`
@@ -468,46 +467,47 @@ export default function UnServiceDevice() {
 
   return (
     <div>
+      <Toast ref={toast} />
+      <div class="block font-bold text-center p-2 border-round mb-2">
       <div class="grid">
         <div class="col">
           <div class="text-center font-bold">
-          <Panel
-            header="Total Farms"
-            style={{ height: "100%", width: "100%" }}
-            className="mypanel align-items-center"
-          >
-            <p className="m-0 text-6xl text-left	">{farmCount}</p>
-          </Panel>
+            <Panel
+              header="Total Farms"
+              style={{ height: "100%", width: "100%" }}
+              className="mypanel align-items-center"
+            >
+              <p className="m-0 text-6xl text-left	">{farmCount}</p>
+            </Panel>
           </div>
         </div>
         <div class="col">
           <div class="text-center font-bold ">
-          <Panel
-            header="Total Devices"
-            style={{ height: "100%", width: "100%" }}
-            className="mypanel align-items-center"
-          >
-            <p className="m-0 text-6xl text-left	">{devicesCount}</p>
-          </Panel>
+            <Panel
+              header="Total Devices"
+              style={{ height: "100%", width: "100%" }}
+              className="mypanel align-items-center"
+            >
+              <p className="m-0 text-6xl text-left	">{devicesCount}</p>
+            </Panel>
           </div>
         </div>
         <div class="col">
           <div class="text-center font-bold ">
-          <Panel
-            header="Total Subscriptions"
-            style={{ height: "100%", width: "100%" }}
-            className="mypanel align-items-center"
-          >
-            <p className="m-0 text-6xl text-left	">
-              {delavalSubscriptionsCount}
-            </p>
-          </Panel>
+            <Panel
+              header="Total Subscriptions"
+              style={{ height: "100%", width: "100%" }}
+              className="mypanel align-items-center"
+            >
+              <p className="m-0 text-6xl text-left	">
+                {delavalSubscriptionsCount}
+              </p>
+            </Panel>
           </div>
         </div>
       </div>
-
-      <Toast ref={toast} />
-
+      </div>
+      <div class="block font-bold text-center p-2 border-round mb-2">
       <Panel
         header="Unserviced devices with their respective components and sub-components"
         className="mt-2  shadow-2 border-round mypanel"
@@ -672,6 +672,9 @@ export default function UnServiceDevice() {
           </Sidebar>
         </div>
       }
+      </div>
+
+
     </div>
   );
 }
